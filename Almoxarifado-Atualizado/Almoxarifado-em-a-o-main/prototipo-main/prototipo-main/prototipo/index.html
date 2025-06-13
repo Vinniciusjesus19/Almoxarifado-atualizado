@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almoxarifado</title>
+    <!--
+        Basic CSS for styling the inventory management system.
+        It uses a clean, modern design with responsive considerations.
+    -->
+    <style>
+        /* General body styling */
+        body {
+            font-family: Arial, sans-serif; /* Updated to Arial as per user request */
+            margin: 0; /* Changed to 0 as container will handle margin */
+            padding: 20px; /* Keeping padding for the body */
+            background-color: #eef2f6; /* Keeping light gray background */
+            display: flex; /* Keeping flexbox for centering */
+            justify-content: center; /* Keeping flexbox for centering */
+            align-items: flex-start; /* Keeping alignment for content */
+            min-height: 100vh; /* Keeping min-height for full page */
+        }
+
+        /* Main container for the application */
+        .container {
+            max-width: 960px; /* Keeping wider container for better table display */
+            width: 100%;
+            background-color: #ffffff; /* Keeping white background for the main content */
+            padding: 30px; /* Keeping padding */
+            border-radius: 12px; /* Keeping more rounded corners */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Keeping shadow */
+            box-sizing: border-box; /* Keeping box-sizing */
+        }
+
+        /* Headings styling */
+        h1, h2, h3 { /* Added h3 to styling */
+            text-align: center;
+            color: #030303; /* Updated color as per user request */
+            margin-bottom: 25px; /* Keeping margin-bottom */
+            font-weight: 600; /* Keeping slightly bolder headings */
+        }
+
+        /* Navigation bar styling */
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* Allow navigation items to wrap */
+            gap: 10px; /* Space between nav buttons */
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #34495e; /* Darker background for nav */
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav button {
+            background-color: #4a90e2; /* Blue nav button */
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            white-space: nowrap; /* Prevent text wrapping in buttons */
+        }
+
+        nav button:hover {
+            background-color: #357bd8; /* Darker blue on hover */
+            transform: translateY(-1px);
+        }
+
+        nav button.active {
+            background-color: #18aa0b; /* Green for active nav button */
+            box-shadow: 0 0 0 3px rgba(24, 170, 11, 0.3); /* Green glow */
+        }
+
+        /* Page section styling - initially hidden */
+        .page-section {
+            display: none;
+        }
+
+        /* Active page section styling */
+        .page-section.active {
+            display: block;
+        }
+
+        /* Form styling */
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px; /* Keeping gap */
+            margin-bottom: 20px; /* Updated margin-bottom as per user request */
+            padding: 25px; /* Keeping padding */
+            border: 1px solid #dcdfe6; /* Keeping border */
+            border-radius: 10px; /* Keeping rounded corners */
+            background-color: #fcfdfe; /* Keeping very light background */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Keeping inner shadow */
+        }
+
+        form div {
+            display: flex;
+            flex-direction: column;
+            width: 100%; /* Ensure div takes full grid column width */
+        }
+
+        label {
+            margin-bottom: 8px; /* Keeping spacing below labels */
+            font-weight: 500; /* Keeping medium font weight */
+            color: #34495e; /* Keeping slightly lighter text for labels */
+        }
+
+        /* Input fields within the form */
+        form input[type="text"],
+        form input[type="number"],
+        form input[type="password"], /* Added password input type */
+        form select { /* Added 'select' for completeness, though not in current HTML */
+            padding: 8px; /* Updated padding as per user request */
+            border: 1px solid #c0c4cc; /* Keeping medium border color */
+            border-radius: 6px; /* Keeping slightly rounded input fields */
+            font-size: 1rem; /* Keeping standard font size */
+            color: #333; /* Keeping text color */
+            transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Keeping transitions */
+            box-sizing: border-box; /* Keeping box-sizing */
+        }
+
+        form input[type="text"]:focus,
+        form input[type="number"]:focus,
+        form input[type="password"]:focus, /* Added password input type focus */
+        form select:focus {
+            border-color: #4a90e2; /* Keeping blue focus border */
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2); /* Keeping light blue glow on focus */
+            outline: none; /* Removing default outline */
+        }
+
+        /* Button styling */
+        button {
+            padding: 8px 12px; /* Updated padding as per user request */
+            margin-left: 5px; /* Updated margin-left as per user request */
+            border: none; /* Keeping no border */
+            border-radius: 6px; /* Keeping rounded button corners */
+            cursor: pointer; /* Keeping pointer cursor */
+            font-size: 1rem; /* Keeping font size */
+            font-weight: 600; /* Keeping bolder button text */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Keeping transitions */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Keeping shadow */
+        }
+
+        button[type="submit"] {
+            background-color: #2ecc71; /* Keeping green submit button */
+            color: white; /* Keeping white text */
+            grid-column: 1 / -1; /* Spanning all columns for submit button */
+            justify-self: center; /* Centering submit button */
+            width: fit-content; /* Adjusting width */
+            padding: 12px 30px; /* Adjusting padding */
+        }
+        button[type="submit"]:hover {
+            background-color: #27ae60; /* Darker green on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Shadow on hover */
+        }
+        button[type="submit"]:active {
+            transform: translateY(0); /* Reset transform on active */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Reset shadow on active */
+        }
+
+
+        /* Table styling */
+        table {
+            width: 100%; /* Keeping width */
+            border-collapse: collapse; /* Keeping border-collapse */
+            margin-top: 25px; /* Keeping margin-top for spacing */
+            background-color: #ffffff; /* Keeping white background */
+            border-radius: 8px; /* Keeping rounded table corners */
+            overflow: hidden; /* Keeping overflow hidden */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Keeping shadow */
+        }
+
+        th, td {
+            padding: 10px; /* Updated padding as per user request */
+            border: 1px solid #0e0e0e; /* Updated border as per user request */
+            text-align: center; /* Updated text-align as per user request */
+        }
+
+        th {
+            background-color: #18aa0b; /* Updated background-color as per user request */
+            color: white; /* Ensuring text is visible on the green background */
+            font-weight: 600; /* Keeping bolder header text */
+            text-transform: uppercase; /* Keeping uppercase text for headers */
+            font-size: 0.9rem; /* Keeping slightly smaller font for headers */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f7f9fc; /* Keeping light striped rows */
+        }
+
+        tr:hover {
+            background-color: #eef5fd; /* Keeping subtle highlight on row hover */
+        }
+
+        td button {
+            margin-right: 8px; /* Keeping spacing between action buttons */
+            padding: 8px 15px; /* Keeping smaller padding for action buttons */
+            font-size: 0.9rem; /* Keeping font size */
+            box-shadow: none; /* Keeping no shadow on these buttons */
+        }
+        td button:last-child {
+            margin-right: 0; /* Keeping no margin on the last button */
+        }
+
+        td button.approve {
+            background-color: #28a745; /* Green for approve */
+            color: white;
+        }
+        td button.approve:hover {
+            background-color: #218838;
+        }
+
+        td button.reject {
+            background-color: #dc3545; /* Red for reject */
+            color: white;
+        }
+        td button.reject:hover {
+            background-color: #c82333;
+        }
+
+        td button:nth-child(1) { /* Editar (Edit) button */
+            background-color: #ffc107; /* Keeping yellow */
+            color: #333; /* Keeping text color */
+        }
+        td button:nth-child(1):hover {
+            background-color: #e0a800; /* Keeping darker yellow on hover */
+        }
+
+        td button:nth-child(2) { /* Excluir (Delete) button, also the second button for other sections */
+            background-color: #e74c3c; /* Keeping red */
+            color: white; /* Keeping text color */
+        }
+        td button:nth-child(2):hover {
+            background-color: #c0392b; /* Keeping darker red on hover */
+        }
+
+        /* Horizontal rule styling */
+        hr {
+            border: none; /* Keeping no border */
+            border-top: 1px solid #dcdfe6; /* Keeping border-top */
+            margin: 40px 0; /* Keeping margin */
+        }
+
+        /* Dashboard specific styling */
+        .dashboard-section {
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .dashboard-section h4 {
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #2c3e50;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .stat-card span {
+            display: block;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-top: 5px;
+            color: #18aa0b; /* Green for numbers */
+        }
+
+        .camera-feed {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .camera-feed img {
+            width: 100%;
+            display: block;
+            /* Changed border-radius application directly to img for consistency */
+            border-radius: 8px;
+        }
+
+        .camera-feed p {
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Login form specific styles */
+        #owner-login-form {
+            display: flex; /* Changed to flex for simpler login form layout */
+            flex-direction: column;
+            align-items: center;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            border: 1px solid #dcdfe6;
+            border-radius: 10px;
+            background-color: #fcfdfe;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        #owner-login-form h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        #owner-login-form div {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        #owner-login-form button[type="submit"] {
+            width: auto;
+            padding: 10px 25px;
+        }
+
+        #login-message {
+            color: red;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        #logout-button {
+            background-color: #f39c12; /* Orange logout button */
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 500;
+            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block; /* Center the button */
+        }
+        #logout-button:hover {
+            background-color: #e67e22;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            form {
+                grid-template-columns: 1fr; /* Stack inputs vertically on small screens */
+                padding: 15px;
+            }
+            form div { /* Ensure divs stack correctly */
+                margin-bottom: 10px; /* Space between stacked form fields */
+            }
+            form div:last-of-type {
+                margin-bottom: 0;
+            }
+            form input, form select { /* Remove individual input margin for mobile */
+                margin: 0;
+            }
+            button[type="submit"] {
+                grid-column: span 1; /* Submit button spans full width on small screens */
+                width: 100%;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block; /* Make table elements block for stacking */
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px; /* Hide table headers visually but keep for screen readers */
+            }
+            tr {
+                border: 1px solid #ddd;
+                margin-bottom: 15px;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%; /* Space for pseudo-element labels */
+                text-align: right; /* Align content to the right */
+            }
+            td:before {
+                /* Create pseudo-elements for labels from th text */
+                position: absolute;
+                top: 0;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+                color: #555;
+            }
+            /* Label mapping for pseudo-elements for Inventory */
+            #estoque-lista td:nth-of-type(1):before { content: "Código:"; }
+            #estoque-lista td:nth-of-type(2):before { content: "Nome:"; }
+            #estoque-lista td:nth-of-type(3):before { content: "Categoria:"; }
+            #estoque-lista td:nth-of-type(4):before { content: "Quantidade:"; }
+            #estoque-lista td:nth-of-type(5):before { content: "Localização:"; }
+            #estoque-lista td:nth-of-type(6):before { content: "Funcionário:"; }
+            #estoque-lista td:nth-of-type(7):before { content: "Ações:"; }
+
+            /* Label mapping for pseudo-elements for Funcionários */
+            #funcionarios-lista td:nth-of-type(1):before { content: "Nome:"; }
+            #funcionarios-lista td:nth-of-type(2):before { content: "Matrícula:"; }
+            #funcionarios-lista td:nth-of-type(3):before { content: "Cargo:"; }
+            #funcionarios-lista td:nth-of-type(4):before { content: "Ações:"; }
+
+
+            /* Label mapping for pseudo-elements for Gerentes */
+            #gerentes-lista td:nth-of-type(1):before { content: "Nome:"; }
+            #gerentes-lista td:nth-of-type(2):before { content: "Matrícula:"; }
+            #gerentes-lista td:nth-of-type(3):before { content: "Ações:"; }
+
+
+            /* Label mapping for pseudo-elements for Pessoal de RH */
+            #rh-lista td:nth-of-type(1):before { content: "Nome:"; }
+            #rh-lista td:nth-of-type(2):before { content: "Matrícula:"; }
+            #rh-lista td:nth-of-type(3):before { content: "Ações:"; }
+
+
+            /* Label mapping for pseudo-elements for Despesas Pendentes */
+            #despesas-pendentes-lista td:nth-of-type(1):before { content: "Descrição:"; }
+            #despesas-pendentes-lista td:nth-of-type(2):before { content: "Valor:"; }
+            #despesas-pendentes-lista td:nth-of-type(3):before { content: "Gerente:"; }
+            #despesas-pendentes-lista td:nth-of-type(4):before { content: "Ações:"; }
+
+            /* Label mapping for pseudo-elements for Despesas Histórico */
+            #despesas-historico-lista td:nth-of-type(1):before { content: "Descrição:"; }
+            #despesas-historico-lista td:nth-of-type(2):before { content: "Valor:"; }
+            #despesas-historico-lista td:nth-of-type(3):before { content: "Gerente:"; }
+            #despesas-historico-lista td:nth-of-type(4):before { content: "Status:"; }
+
+
+            td:last-of-type {
+                text-align: center; /* Center action buttons */
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: 1fr; /* Stack stats cards on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Empresa Meily</h1>
+        <h1>Controle de Almoxarifado</h1>
+
+        <!-- Navigation Bar -->
+        <nav>
+            <button onclick="showPage('estoque')">Almoxarifado</button>
+            <button onclick="showPage('funcionarios')">Funcionários</button>
+            <button onclick="showPage('gerentes')">Gerentes</button>
+            <button onclick="showPage('rh')">RH</button>
+            <button onclick="showPage('despesas')">Despesas</button>
+            <button onclick="showPage('painel-dono')">Gestor Geral</button> <!-- Changed button text -->
+        </nav>
+
+        <!-- Inventory Section -->
+        <div id="estoque" class="page-section active">
+            <h2>Adicionar/Editar Item</h2>
+            <form id="item-form">
+                <div>
+                    <label for="codigo">Código:</label>
+                    <input type="text" id="codigo" placeholder="Código do Item" required autocomplete="off">
+                </div>
+                <div>
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" placeholder="Nome do Item" required autocomplete="off">
+                </div>
+                <div>
+                    <label for="categoria">Categoria:</label>
+                    <input type="text" id="categoria" placeholder="Categoria" list="sugestoes-categoria" required autocomplete="off">
+                    <datalist id="sugestoes-categoria">
+                        <option value="Sistema ERP">
+                        <option value="SRM">
+                        <option value="PEPS">
+                        <option value="Empilhadeiras">
+                        <option value="Esteira Transportadora">
+                        <option value="Paleteiras">
+                        <option value="Balança Eletrônica Transpaleteira">
+                        <option value="Ferramentas Manuais">
+                        <option value="Ferro">
+                        <option value="Aço">
+                        <option value="Martelo">
+                        <option value="Chave de Fenda">
+                        <option value="Barra">
+                        <option value="Equipamento de Proteção Individual (EPI)">
+                        <option value="Material de Limpeza">
+                        <option value="Material de Escritório">
+                        <option value="Componentes Elétricos">
+                        <option value="Peças Hidráulicas">
+                        <option value="Lubrificantes">
+                        <option value="Adesivos e Selantes">
+                        <option value="Equipamento de Segurança">
+                        <option value="Máquinas e Ferramentas Elétricas">
+                    </datalist>
+                </div>
+                <div>
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" id="quantidade" placeholder="Quantidade" required min="0" autocomplete="off">
+                </div>
+                <div>
+                    <label for="localizacao">Localização:</label>
+                    <input type="text" id="localizacao" placeholder="Localização" required autocomplete="off">
+                </div>
+                <div>
+                    <label for="funcionario">Funcionário Responsável:</label>
+                    <input type="text" id="funcionario" placeholder="Funcionário Responsável" required autocomplete="off">
+                </div>
+                <button type="submit">Salvar Item</button>
+            </form>
+
+            <h2>Itens em Estoque</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Quantidade</th>
+                        <th>Localização</th>
+                        <th>Funcionário</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="estoque-lista">
+                    <!-- Inventory items will be rendered here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Employee Management Section -->
+        <div id="funcionarios" class="page-section">
+            <h2>Cadastro de Funcionários</h2>
+            <form id="funcionario-form">
+                <div>
+                    <label for="funcionario-nome">Nome do Funcionário:</label>
+                    <input type="text" id="funcionario-nome" placeholder="Nome do Funcionário" required autocomplete="off">
+                </div>
+                <div>
+                    <label for="funcionario-matricula">Matrícula (CPF/RG):</label>
+                    <input type="text" id="funcionario-matricula" placeholder="CPF ou RG do Funcionário" required autocomplete="off">
+                </div>
+                <div>
+                    <label for="funcionario-cargo">Cargo:</label>
+                    <input type="text" id="funcionario-cargo" placeholder="Cargo (Ex: Operador, Gerente)" required autocomplete="off">
+                </div>
+                <button type="submit">Cadastrar Funcionário</button>
+            </form>
+
+            <h3>Lista de Funcionários</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Matrícula</th>
+                        <th>Cargo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="funcionarios-lista">
+                    <!-- Employee items will be rendered here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Manager Management Section -->
+        <div id="gerentes" class="page-section">
+            <h2>Cadastro de Gerentes</h2>
+            <form id="gerente-form">
+                <div>
+                    <label for="gerente-nome">Nome do Gerente:</label>
+                    <input type="text" id="gerente-nome" placeholder="Nome do Gerente" required autocomplete="off">
+                </div>
+                <div>
+                    <label for="gerente-matricula">Matrícula (CPF/RG):</label>
+                    <input type="text" id="gerente-matricula" placeholder="CPF ou RG do Gerente" required autocomplete="off">
+                </div>
+                <button type="submit">Cadastrar Gerente</button>
+            </form>
+
+            <h3>Lista de Gerentes</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Matrícula</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="gerentes-lista">
+                    <!-- Manager items will be rendered here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- HR Personnel Management Section -->
+        <div id="rh" class="page-section">
+            <h2>Cadastro de Pessoal de RH</h2>
+            <form id="rh-form">
+                <div>
+                    <label for="rh-nome">Nome do Pessoal de RH:</label>
+                    <input type="text" id="rh-nome" placeholder="Nome do Pessoal de RH" required autocomplete="off">
+                </div>
+                <div>
+                    <label for="rh-matricula">Matrícula (CPF/RG):</label>
+                    <input type="text" id="rh-matricula" placeholder="CPF ou RG do Pessoal de RH" required autocomplete="off">
+                </div>
+                <button type="submit">Cadastrar Pessoal de RH</button>
+            </form>
+
+            <h3>Lista de Pessoal de RH</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Matrícula</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="rh-lista">
+                    <!-- HR personnel items will be rendered here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Expense Management Section -->
+        <div id="despesas" class="page-section">
+            <h2>Gestão de Despesas</h2>
+            <h3>Solicitar Nova Despesa</h3>
+            <form id="despesa-form">
+                <div>
+                    <label for="descricao-despesa">Descrição da Despesa:</label>
+                    <input type="text" id="descricao-despesa" placeholder="Ex: Compra de material de escritório" required autocomplete="off">
+                </div>
+                <div>
+                    <label for="valor-despesa">Valor ($):</label>
+                    <input type="number" id="valor-despesa" placeholder="Ex: 150.00" step="0.01" required min="0" autocomplete="off">
+                </div>
+                <div>
+                    <label for="gerente-solicitante">Gerente Solicitante:</label>
+                    <select id="gerente-solicitante" required>
+                        <option value="">-- Selecione o Gerente --</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <button type="submit">Enviar Solicitação de Despesa</button>
+            </form>
+
+            <h3>Despesas Pendentes de Aprovação</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Valor</th>
+                        <th>Gerente Solicitante</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="despesas-pendentes-lista">
+                    <!-- Pending expenses will be rendered here -->
+                </tbody>
+            </table>
+
+            <h3>Histórico de Despesas (Aprovadas/Rejeitadas)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Valor</th>
+                        <th>Gerente Solicitante</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="despesas-historico-lista">
+                    <!-- Approved/Rejected expenses will be rendered here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Owner's Dashboard Section -->
+        <div id="painel-dono" class="page-section">
+            <h2>Visão Geral do Negócio (Gestor Geral)</h2> <!-- Changed title -->
+
+            <!-- Login Form for Owner's Dashboard -->
+            <form id="owner-login-form">
+                <h3>Acesso Restrito ao Painel do Gestor Geral</h3> <!-- Changed login form title -->
+                <div>
+                    <label for="owner-email">Email:</label>
+                    <input type="text" id="owner-email" placeholder="Seu email" required autocomplete="username">
+                </div>
+                <div>
+                    <label for="owner-password">Senha:</label>
+                    <input type="password" id="owner-password" placeholder="Sua senha" required autocomplete="current-password">
+                </div>
+                <button type="submit">Entrar</button>
+                <p id="login-message" style="display: none;"></p>
+            </form>
+
+            <!-- Owner's Dashboard Content (initially hidden) -->
+            <div id="owner-dashboard-content" style="display: none;">
+                <button id="logout-button">Sair do Painel do Gestor Geral</button> <!-- Changed logout button text -->
+
+                <div class="dashboard-section">
+                    <h4>Comportamento de Funcionários, Gerentes e RH</h4>
+                    <div class="dashboard-stats">
+                        <div class="stat-card">Funcionários Cadastrados<span></span></div>
+                        <div class="stat-card">Gerentes Cadastrados<span></span></div>
+                        <div class="stat-card">Pessoal de RH Cadastrado<span></span></div>
+                    </div>
+                    <p>
+                        <small>
+                            *A seção de "Comportamento" oferece um resumo do número de funcionários, gerentes e pessoal de RH cadastrados.
+                            Para análises de comportamento mais detalhadas (ex: itens manuseados por funcionário), seria necessário implementar
+                            um sistema de log de transações mais complexo.
+                        </small>
+                    </p>
+                </div>
+
+                <div class="dashboard-section">
+                    <h4>Andamento do Galpão e Estoque</h4>
+                    <div class="dashboard-stats">
+                        <div class="stat-card">Total de Itens em Estoque<span></span></div>
+                        <div class="stat-card">Tipos de Itens Únicos<span></span></div>
+                        <div class="stat-card">Despesas Pendentes<span></span></div>
+                        <div class="stat-card">Despesas Aprovadas<span></span></div>
+                        <div class="stat-card">Despesas Rejeitadas<span></span></div>
+                    </div>
+                    <p>
+                        <small>
+                            *A seção de "Andamento" fornece uma visão geral do estoque atual e do status das despesas,
+                            incluindo totais de itens e o número de solicitações financeiras pendentes, aprovadas e rejeitadas.
+                        </small>
+                    </p>
+                </div>
+
+                <div class="dashboard-section">
+                    <h4>Central de Câmeras (Simulação)</h4>
+                    <p>
+                        <small>
+                            *Esta é uma **simulação** de uma central de câmeras. Em um sistema real, aqui você teria
+                            acesso a feeds de vídeo ao vivo para observar o galpão, funcionários e estoque de materiais.
+                            No momento, são exibidas imagens de exemplo.
+                        </small>
+                    </p>
+                    <div class="dashboard-stats">
+                        <div class="camera-feed">
+                            <img src="https://placehold.co/300x200/cccccc/333333?text=Câmera+Galpão+1" alt="Câmera Galpão 1">
+                            <p>Câmera Galpão: Área de Recebimento</p>
+                        </div>
+                        <div class="camera-feed">
+                            <img src="https://placehold.co/300x200/cccccc/333333?text=Câmera+Estoque+A" alt="Câmera Estoque A">
+                            <p>Câmera Estoque: Corredor A</p>
+                        </div>
+                        <div class="camera-feed">
+                            <img src="https://placehold.co/300x200/cccccc/333333?text=Câmera+Operação" alt="Câmera Operação">
+                            <p>Câmera Operação: Área de Expedição</p>
+                        </div>
+                        <div class="camera-feed">
+                            <img src="https://placehold.co/300x200/cccccc/333333?text=Câmera+Entrada" alt="Câmera Entrada">
+                            <p>Câmera Entrada: Portão Principal</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- AUTHENTICATION LOGIC FOR OWNER'S DASHBOARD (DEMONSTRATION ONLY) ---
+        // IMPORTANT: For a real application, DO NOT hardcode credentials like this.
+        // Authentication should be handled securely on a backend server.
+        const OWNER_EMAIL = "dono@empresa.com";
+        const OWNER_PASSWORD = "senha123";
+
+        let isLoggedIn = false; // Simple flag for login status
+
+        const ownerLoginForm = document.getElementById('owner-login-form');
+        const ownerEmailInput = document.getElementById('owner-email');
+        const ownerPasswordInput = document.getElementById('owner-password');
+        const loginMessage = document.getElementById('login-message');
+        const ownerDashboardContent = document.getElementById('owner-dashboard-content');
+        const logoutButton = document.getElementById('logout-button');
+
+        ownerLoginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = ownerEmailInput.value;
+            const password = ownerPasswordInput.value;
+
+            if (email === OWNER_EMAIL && password === OWNER_PASSWORD) {
+                isLoggedIn = true;
+                loginMessage.style.display = 'none';
+                ownerLoginForm.style.display = 'none';
+                ownerDashboardContent.style.display = 'block';
+                updateDashboardStats(); // Update stats on successful login
+            } else {
+                loginMessage.textContent = 'Email ou senha incorretos.';
+                loginMessage.style.display = 'block';
+            }
+        });
+
+        logoutButton.addEventListener('click', function() {
+            isLoggedIn = false;
+            ownerLoginForm.style.display = 'flex'; // Show login form
+            ownerDashboardContent.style.display = 'none'; // Hide dashboard
+            ownerEmailInput.value = '';
+            ownerPasswordInput.value = '';
+            loginMessage.style.display = 'none';
+        });
+
+        // --- GLOBAL DATA ARRAYS (Using localStorage for persistence) ---
+        let estoqueItems = JSON.parse(localStorage.getItem('estoqueItems')) || [];
+        let funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+        let gerentes = JSON.parse(localStorage.getItem('gerentes')) || [];
+        let rhPersonnel = JSON.parse(localStorage.getItem('rhPersonnel')) || [];
+        let despesasPendentes = JSON.parse(localStorage.getItem('despesasPendentes')) || [];
+        let despesasHistorico = JSON.parse(localStorage.getItem('despesasHistorico')) || [];
+
+        // --- HELPER FUNCTIONS ---
+
+        function saveData() {
+            localStorage.setItem('estoqueItems', JSON.stringify(estoqueItems));
+            localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+            localStorage.setItem('gerentes', JSON.stringify(gerentes));
+            localStorage.setItem('rhPersonnel', JSON.stringify(rhPersonnel));
+            localStorage.setItem('despesasPendentes', JSON.stringify(despesasPendentes));
+            localStorage.setItem('despesasHistorico', JSON.stringify(despesasHistorico));
+        }
+
+        function updateDashboardStats() {
+            if (!isLoggedIn) return; // Only update if logged in
+
+            const statsCards = document.querySelectorAll('.dashboard-stats .stat-card span');
+
+            // Comportamento de Funcionários, Gerentes e RH
+            statsCards[0].textContent = funcionarios.length;
+            statsCards[1].textContent = gerentes.length;
+            statsCards[2].textContent = rhPersonnel.length;
+
+            // Andamento do Galpão e Estoque
+            const totalItemsInStock = estoqueItems.reduce((sum, item) => sum + item.quantidade, 0);
+            statsCards[3].textContent = totalItemsInStock;
+            statsCards[4].textContent = new Set(estoqueItems.map(item => item.nome.toLowerCase())).size; // Unique item types
+            statsCards[5].textContent = despesasPendentes.length;
+            statsCards[6].textContent = despesasHistorico.filter(d => d.status === 'Aprovada').length;
+            statsCards[7].textContent = despesasHistorico.filter(d => d.status === 'Rejeitada').length;
+        }
+
+        // --- NAVIGATION LOGIC ---
+        function showPage(pageId) {
+            // Hide all page sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Deactivate all nav buttons
+            document.querySelectorAll('nav button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show the selected page section
+            const activePage = document.getElementById(pageId);
+            if (activePage) {
+                activePage.classList.add('active');
+            }
+
+            // Activate the corresponding nav button
+            const activeButton = document.querySelector(`nav button[onclick="showPage('${pageId}')"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+
+            // Special handling for dashboard: show login or content
+            if (pageId === 'painel-dono') { // 'painel-dono' is still the ID, only text changes
+                if (isLoggedIn) {
+                    ownerLoginForm.style.display = 'none';
+                    ownerDashboardContent.style.display = 'block';
+                    updateDashboardStats();
+                } else {
+                    ownerLoginForm.style.display = 'flex';
+                    ownerDashboardContent.style.display = 'none';
+                    loginMessage.style.display = 'none'; // Clear any previous login messages
+                }
+            } else {
+                ownerLoginForm.style.display = 'none'; // Ensure login is hidden on other pages
+                ownerDashboardContent.style.display = 'none';
+            }
+        }
+
+        // --- INVENTORY (ESTOQUE) LOGIC ---
+        const itemForm = document.getElementById('item-form');
+        const estoqueList = document.getElementById('estoque-lista');
+        let editingItemCode = null; // To keep track of the item being edited
+
+        itemForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const item = {
+                codigo: document.getElementById('codigo').value,
+                nome: document.getElementById('nome').value,
+                categoria: document.getElementById('categoria').value,
+                quantidade: parseInt(document.getElementById('quantidade').value),
+                localizacao: document.getElementById('localizacao').value,
+                funcionario: document.getElementById('funcionario').value
+            };
+
+            if (editingItemCode) {
+                // Update existing item
+                const index = estoqueItems.findIndex(i => i.codigo === editingItemCode);
+                if (index !== -1) {
+                    estoqueItems[index] = item;
+                    editingItemCode = null; // Reset editing state
+                    itemForm.querySelector('button[type="submit"]').textContent = 'Salvar Item'; // Reset button text
+                }
+            } else {
+                // Add new item
+                if (estoqueItems.some(i => i.codigo === item.codigo)) {
+                    alert('Erro: Já existe um item com este código. Use um código único ou edite o item existente.');
+                    return;
+                }
+                estoqueItems.push(item);
+            }
+
+            saveData();
+            renderEstoqueItems();
+            updateDashboardStats();
+            itemForm.reset();
+        });
+
+        function renderEstoqueItems() {
+            estoqueList.innerHTML = ''; // Clear current list
+            estoqueItems.forEach(item => {
+                const row = estoqueList.insertRow();
+                row.insertCell().textContent = item.codigo;
+                row.insertCell().textContent = item.nome;
+                row.insertCell().textContent = item.categoria;
+                row.insertCell().textContent = item.quantidade;
+                row.insertCell().textContent = item.localizacao;
+                row.insertCell().textContent = item.funcionario;
+
+                const actionsCell = row.insertCell();
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Editar';
+                editButton.className = 'edit-button';
+                editButton.onclick = () => editEstoqueItem(item.codigo);
+                actionsCell.appendChild(editButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Excluir';
+                deleteButton.className = 'delete-button';
+                deleteButton.onclick = () => deleteEstoqueItem(item.codigo);
+                actionsCell.appendChild(deleteButton);
+            });
+        }
+
+        function editEstoqueItem(codigo) {
+            const itemToEdit = estoqueItems.find(item => item.codigo === codigo);
+            if (itemToEdit) {
+                document.getElementById('codigo').value = itemToEdit.codigo;
+                document.getElementById('nome').value = itemToEdit.nome;
+                document.getElementById('categoria').value = itemToEdit.categoria;
+                document.getElementById('quantidade').value = itemToEdit.quantidade;
+                document.getElementById('localizacao').value = itemToEdit.localizacao;
+                document.getElementById('funcionario').value = itemToEdit.funcionario;
+                editingItemCode = codigo; // Set the item being edited
+                itemForm.querySelector('button[type="submit"]').textContent = 'Salvar Item'; // Reset button text
+            }
+        }
+
+        function deleteEstoqueItem(codigo) {
+            if (confirm('Tem certeza que deseja excluir este item?')) {
+                estoqueItems = estoqueItems.filter(item => item.codigo !== codigo);
+                saveData();
+                renderEstoqueItems();
+                updateDashboardStats();
+            }
+        }
+
+        // --- EMPLOYEES (FUNCIONÁRIOS) LOGIC ---
+        const funcionarioForm = document.getElementById('funcionario-form');
+        const funcionariosList = document.getElementById('funcionarios-lista');
+        let editingFuncionarioMatricula = null; // Changed to matricula for unique identification
+
+        funcionarioForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const funcionario = {
+                nome: document.getElementById('funcionario-nome').value,
+                matricula: document.getElementById('funcionario-matricula').value,
+                cargo: document.getElementById('funcionario-cargo').value
+            };
+
+            if (editingFuncionarioMatricula) {
+                const index = funcionarios.findIndex(f => f.matricula === editingFuncionarioMatricula);
+                if (index !== -1) {
+                    funcionarios[index] = funcionario;
+                    editingFuncionarioMatricula = null;
+                    funcionarioForm.querySelector('button[type="submit"]').textContent = 'Cadastrar Funcionário';
+                }
+            } else {
+                if (funcionarios.some(f => f.matricula === funcionario.matricula)) {
+                    alert('Erro: Já existe um funcionário com esta matrícula.');
+                    return;
+                }
+                funcionarios.push(funcionario);
+            }
+
+            saveData();
+            renderFuncionarios();
+            updateDashboardStats();
+            funcionarioForm.reset();
+        });
+
+        function renderFuncionarios() {
+            funcionariosList.innerHTML = '';
+            funcionarios.forEach(func => {
+                const row = funcionariosList.insertRow();
+                row.insertCell().textContent = func.nome;
+                row.insertCell().textContent = func.matricula;
+                row.insertCell().textContent = func.cargo;
+
+                const actionsCell = row.insertCell();
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Editar';
+                editButton.className = 'edit-button';
+                editButton.onclick = () => editFuncionario(func.matricula);
+                actionsCell.appendChild(editButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Excluir';
+                deleteButton.className = 'delete-button';
+                deleteButton.onclick = () => deleteFuncionario(func.matricula);
+                actionsCell.appendChild(deleteButton);
+            });
+        }
+
+        function editFuncionario(matricula) {
+            const funcToEdit = funcionarios.find(f => f.matricula === matricula);
+            if (funcToEdit) {
+                document.getElementById('funcionario-nome').value = funcToEdit.nome;
+                document.getElementById('funcionario-matricula').value = funcToEdit.matricula;
+                document.getElementById('funcionario-cargo').value = funcToEdit.cargo;
+                editingFuncionarioMatricula = matricula;
+                funcionarioForm.querySelector('button[type="submit"]').textContent = 'Atualizar Funcionário';
+            }
+        }
+
+        function deleteFuncionario(matricula) {
+            if (confirm('Tem certeza que deseja excluir este funcionário?')) {
+                funcionarios = funcionarios.filter(f => f.matricula !== matricula);
+                saveData();
+                renderFuncionarios();
+                updateDashboardStats();
+            }
+        }
+
+        // --- MANAGERS (GERENTES) LOGIC ---
+        const gerenteForm = document.getElementById('gerente-form');
+        const gerentesList = document.getElementById('gerentes-lista');
+        const gerenteSolicitanteSelect = document.getElementById('gerente-solicitante');
+        let editingGerenteMatricula = null; // Changed to matricula for unique identification
+
+        gerenteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const gerente = {
+                nome: document.getElementById('gerente-nome').value,
+                matricula: document.getElementById('gerente-matricula').value // Added matricula
+            };
+
+            if (editingGerenteMatricula) {
+                const index = gerentes.findIndex(g => g.matricula === editingGerenteMatricula);
+                if (index !== -1) {
+                    gerentes[index] = gerente;
+                    editingGerenteMatricula = null;
+                    gerenteForm.querySelector('button[type="submit"]').textContent = 'Cadastrar Gerente';
+                }
+            } else {
+                // Check for unique matricula before adding
+                if (gerentes.some(g => g.matricula === gerente.matricula)) {
+                    alert('Erro: Já existe um gerente com esta matrícula.');
+                    return;
+                }
+                gerentes.push(gerente);
+            }
+
+            saveData();
+            renderGerentes();
+            populateGerenteSelect();
+            updateDashboardStats();
+            gerenteForm.reset();
+        });
+
+        function renderGerentes() {
+            gerentesList.innerHTML = '';
+            gerentes.forEach(gerente => {
+                const row = gerentesList.insertRow();
+                row.insertCell().textContent = gerente.nome;
+                row.insertCell().textContent = gerente.matricula; // Display matricula
+
+                const actionsCell = row.insertCell();
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Editar';
+                editButton.className = 'edit-button';
+                editButton.onclick = () => editGerente(gerente.matricula);
+                actionsCell.appendChild(editButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Excluir';
+                deleteButton.className = 'delete-button';
+                deleteButton.onclick = () => deleteGerente(gerente.matricula);
+                actionsCell.appendChild(deleteButton);
+            });
+        }
+
+        function editGerente(matricula) {
+            const gerenteToEdit = gerentes.find(g => g.matricula === matricula);
+            if (gerenteToEdit) {
+                document.getElementById('gerente-nome').value = gerenteToEdit.nome;
+                document.getElementById('gerente-matricula').value = gerenteToEdit.matricula; // Populate matricula
+                editingGerenteMatricula = matricula;
+                gerenteForm.querySelector('button[type="submit"]').textContent = 'Atualizar Gerente';
+            }
+        }
+
+        function deleteGerente(matricula) {
+            if (confirm('Tem certeza que deseja excluir este gerente?')) {
+                gerentes = gerentes.filter(g => g.matricula !== matricula);
+                saveData();
+                renderGerentes();
+                populateGerenteSelect();
+                updateDashboardStats();
+            }
+        }
+
+        function populateGerenteSelect() {
+            gerenteSolicitanteSelect.innerHTML = '<option value="">-- Selecione o Gerente --</option>';
+            gerentes.forEach(gerente => {
+                const option = document.createElement('option');
+                option.value = gerente.nome; // Using name as value for select for simplicity
+                option.textContent = gerente.nome;
+                gerenteSolicitanteSelect.appendChild(option);
+            });
+        }
+
+        // --- HR PERSONNEL (RH) LOGIC ---
+        const rhForm = document.getElementById('rh-form');
+        const rhList = document.getElementById('rh-lista');
+        let editingRhMatricula = null; // Changed to matricula for unique identification
+
+        rhForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const rh = {
+                nome: document.getElementById('rh-nome').value,
+                matricula: document.getElementById('rh-matricula').value // Added matricula
+            };
+
+            if (editingRhMatricula) {
+                const index = rhPersonnel.findIndex(r => r.matricula === editingRhMatricula);
+                if (index !== -1) {
+                    rhPersonnel[index] = rh;
+                    editingRhMatricula = null;
+                    rhForm.querySelector('button[type="submit"]').textContent = 'Cadastrar Pessoal de RH';
+                }
+            } else {
+                // Check for unique matricula before adding
+                if (rhPersonnel.some(r => r.matricula === rh.matricula)) {
+                    alert('Erro: Já existe um pessoal de RH com esta matrícula.');
+                    return;
+                }
+                rhPersonnel.push(rh);
+            }
+
+            saveData();
+            renderRhPersonnel();
+            updateDashboardStats();
+            rhForm.reset();
+        });
+
+        function renderRhPersonnel() {
+            rhList.innerHTML = '';
+            rhPersonnel.forEach(person => {
+                const row = rhList.insertRow();
+                row.insertCell().textContent = person.nome;
+                row.insertCell().textContent = person.matricula; // Display matricula
+
+                const actionsCell = row.insertCell();
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Editar';
+                editButton.className = 'edit-button';
+                editButton.onclick = () => editRh(person.matricula);
+                actionsCell.appendChild(editButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Excluir';
+                deleteButton.className = 'delete-button';
+                deleteButton.onclick = () => deleteRh(person.matricula);
+                actionsCell.appendChild(deleteButton);
+            });
+        }
+
+        function editRh(matricula) {
+            const rhToEdit = rhPersonnel.find(r => r.matricula === matricula);
+            if (rhToEdit) {
+                document.getElementById('rh-nome').value = rhToEdit.nome;
+                document.getElementById('rh-matricula').value = rhToEdit.matricula; // Populate matricula
+                editingRhMatricula = matricula;
+                rhForm.querySelector('button[type="submit"]').textContent = 'Atualizar Pessoal de RH';
+            }
+        }
+
+        function deleteRh(matricula) {
+            if (confirm('Tem certeza que deseja excluir este pessoal de RH?')) {
+                rhPersonnel = rhPersonnel.filter(r => r.matricula !== matricula);
+                saveData();
+                renderRhPersonnel();
+                updateDashboardStats();
+            }
+        }
+
+
+        // --- EXPENSE (DESPESAS) LOGIC ---
+        const despesaForm = document.getElementById('despesa-form');
+        const despesasPendentesList = document.getElementById('despesas-pendentes-lista');
+        const despesasHistoricoList = document.getElementById('despesas-historico-lista');
+
+        despesaForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const despesa = {
+                id: Date.now(), // Simple unique ID
+                descricao: document.getElementById('descricao-despesa').value,
+                valor: parseFloat(document.getElementById('valor-despesa').value),
+                gerente: document.getElementById('gerente-solicitante').value,
+                status: 'Pendente' // Initial status
+            };
+
+            despesasPendentes.push(despesa);
+            saveData();
+            renderDespesasPendentes();
+            updateDashboardStats();
+            despesaForm.reset();
+        });
+
+        function renderDespesasPendentes() {
+            despesasPendentesList.innerHTML = '';
+            despesasPendentes.forEach(despesa => {
+                const row = despesasPendentesList.insertRow();
+                row.insertCell().textContent = despesa.descricao;
+                row.insertCell().textContent = `R$ ${despesa.valor.toFixed(2)}`;
+                row.insertCell().textContent = despesa.gerente;
+
+                const actionsCell = row.insertCell();
+                const approveButton = document.createElement('button');
+                approveButton.textContent = 'Aprovar';
+                approveButton.className = 'approve';
+                approveButton.onclick = () => approveDespesa(despesa.id);
+                actionsCell.appendChild(approveButton);
+
+                const rejectButton = document.createElement('button');
+                rejectButton.textContent = 'Rejeitar';
+                rejectButton.className = 'reject';
+                rejectButton.onclick = () => rejectDespesa(despesa.id);
+                actionsCell.appendChild(rejectButton);
+            });
+        }
+
+        function approveDespesa(id) {
+            const index = despesasPendentes.findIndex(d => d.id === id);
+            if (index !== -1) {
+                const approvedDespesa = despesasPendentes.splice(index, 1)[0];
+                approvedDespesa.status = 'Aprovada';
+                despesasHistorico.push(approvedDespesa);
+                saveData();
+                renderDespesasPendentes();
+                renderDespesasHistorico();
+                updateDashboardStats();
+            }
+        }
+
+        function rejectDespesa(id) {
+            const index = despesasPendentes.findIndex(d => d.id === id);
+            if (index !== -1) {
+                const rejectedDespesa = despesasPendentes.splice(index, 1)[0];
+                rejectedDespesa.status = 'Rejeitada';
+                despesasHistorico.push(rejectedDespesa);
+                saveData();
+                renderDespesasPendentes();
+                renderDespesasHistorico();
+                updateDashboardStats();
+            }
+        }
+
+        function renderDespesasHistorico() {
+            despesasHistoricoList.innerHTML = '';
+            despesasHistorico.forEach(despesa => {
+                const row = despesasHistoricoList.insertRow();
+                row.insertCell().textContent = despesa.descricao;
+                row.insertCell().textContent = `R$ ${despesa.valor.toFixed(2)}`;
+                row.insertCell().textContent = despesa.gerente;
+                row.insertCell().textContent = despesa.status;
+            });
+        }
+
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderEstoqueItems();
+            renderFuncionarios();
+            renderGerentes();
+            populateGerenteSelect(); // Populate manager dropdown on load
+            renderRhPersonnel();
+            renderDespesasPendentes();
+            renderDespesasHistorico();
+            showPage('estoque'); // Show inventory by default
+            updateDashboardStats(); // Initial dashboard update
+        });
+    </script>
+</body>
+</html>
